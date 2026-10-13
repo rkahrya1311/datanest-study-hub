@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataNest | AI & Data Science Study Hub</title>
+  <style>
+    :root {
+      --bg: #f5f7ff;
+      --surface: #ffffff;
+      --ink: #17233f;
+      --muted: #68738d;
+      --primary: #5a5ee8;
+      --primary-dark: #4145c8;
+      --mint: #21b89a;
+      --line: #e7eaf5;
+      --shadow: 0 14px 35px rgba(41, 51, 104, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px clamp(18px, 5vw, 72px);
+      background: rgba(255,255,255,0.86);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -0.4px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #8b70f2);
+      box-shadow: 0 7px 18px rgba(90, 94, 232, 0.28);
+    }
+    .brand-name { font-size: 1.15rem; }
+    .brand-name span { color: var(--primary); }
+    nav { display: flex; gap: 25px; color: var(--muted); font-size: 0.93rem; font-weight: 600; }
+    nav a:hover { color: var(--primary); }
+
+    .wrap { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 42px;
+      align-items: center;
+      padding: 62px 0 38px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-dark);
+      background: #ececff;
+      border: 1px solid #dedfff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 750;
+      font-size: 0.78rem;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 650px;
+      margin: 18px 0 14px;
+      font-size: clamp(2.35rem, 5vw, 4.15rem);
+      letter-spacing: -2.6px;
+      line-height: 1.05;
+    }
+    h1 span {
+      color: var(--primary);
+      background: linear-gradient(90deg, var(--primary), #9a68e8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-copy { max-width: 580px; color: var(--muted); font-size: 1.05rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 17px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { color: #fff; background: var(--primary); box-shadow: 0 8px 18px rgba(90,94,232,0.22); }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-light { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+
+    .hero-visual {
+      position: relative;
+      min-height: 310px;
+      padding: 24px;
+      border-radius: 30px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #5a5ee8 0%, #7964e9 55%, #9a70e8 100%);
+      box-shadow: 0 24px 55px rgba(90, 94, 232, 0.24);
+      color: white;
+    }
+    .hero-visual::before, .hero-visual::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.1); }
+    .hero-visual::before { width: 230px; height: 230px; right: -65px; top: -65px; }
+    .hero-visual::after { width: 170px; height: 170px; left: -70px; bottom: -90px; }
+    .visual-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+    .visual-top small { opacity: 0.82; font-weight: 700; }
+    .sparkle { font-size: 1.7rem; }
+    .visual-title { font-size: 1.45rem; font-weight: 800; margin: 30px 0 4px; position: relative; z-index: 1; }
+    .visual-sub { opacity: 0.82; font-size: 0.9rem; position: relative; z-index: 1; }
+    .mini-progress { margin-top: 22px; position: relative; z-index: 1; }
+    .mini-progress-label { display: flex; justify-content: space-between; font-size: 0.83rem; margin-bottom: 8px; }
+    .progress-track { height: 9px; overflow: hidden; border-radius: 20px; background: rgba(255,255,255,0.25); }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #a8ffe6; transition: width 0.25s ease; }
+    .floating-note { display: inline-flex; gap: 8px; align-items: center; margin-top: 23px; padding: 10px 13px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.22); border-radius: 12px; position: relative; z-index: 1; font-size: 0.82rem; }
+
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin: 30px 0 17px; }
+    .section-heading h2 { margin: 0; font-size: 1.55rem; letter-spacing: -0.6px; }
+    .section-heading p { margin: 5px 0 0; color: var(--muted); font-size: 0.92rem; }
+    .tiny-label { color: var(--primary); font-size: 0.78rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .stat, .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .stat { padding: 20px; display: flex; gap: 14px; align-items: center; }
+    .stat-icon { width: 45px; height: 45px; flex: 0 0 45px; display: grid; place-items: center; border-radius: 14px; background: #f0f0ff; font-size: 1.3rem; }
+    .stat:nth-child(2) .stat-icon { background: #e4fbf4; }
+    .stat:nth-child(3) .stat-icon { background: #fff2df; }
+    .stat strong { display: block; font-size: 1.45rem; line-height: 1.1; }
+    .stat span { color: var(--muted); font-size: 0.83rem; }
+
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+    .road-card { padding: 21px; position: relative; overflow: hidden; transition: transform 0.18s ease, border-color 0.18s ease; }
+    .road-card:hover { transform: translateY(-4px); border-color: #c7c8ff; }
+    .road-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 17px; }
+    .road-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; font-size: 1.45rem; background: #eeeeff; }
+    .road-card:nth-child(2) .road-icon { background: #e4fbf4; }
+    .road-card:nth-child(3) .road-icon { background: #fff0df; }
+    .road-card:nth-child(4) .road-icon { background: #f9e9ff; }
+    .step { color: #929bb2; font-size: 0.75rem; font-weight: 800; }
+    .road-card h3 { font-size: 1.03rem; margin: 0 0 7px; }
+    .road-card p { font-size: 0.84rem; color: var(--muted); margin: 0; min-height: 48px; }
+    .tag { display: inline-block; margin-top: 15px; padding: 5px 9px; border-radius: 8px; color: #4b50c9; background: #f0f0ff; font-size: 0.72rem; font-weight: 800; }
+    .road-card:nth-child(2) .tag { color: #137d68; background: #e4fbf4; }
+    .road-card:nth-child(3) .tag { color: #9c6512; background: #fff0df; }
+    .road-card:nth-child(4) .tag { color: #9147a9; background: #f9e9ff; }
+
+    .bottom-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px; margin-bottom: 58px; }
+    .task-card, .focus-card { padding: 24px; }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 17px; }
+    .card-title-row h2 { margin: 0; font-size: 1.25rem; }
+    .count-pill { padding: 6px 10px; background: #f0f0ff; color: var(--primary-dark); border-radius: 999px; font-size: 0.75rem; font-weight: 800; white-space: nowrap; }
+    .task-form { display: flex; gap: 9px; margin-bottom: 14px; }
+    .task-form input { min-width: 0; flex: 1; padding: 12px 13px; border-radius: 11px; border: 1px solid #dfe3f1; outline: none; background: #fbfcff; color: var(--ink); }
+    .task-form input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(90,94,232,0.1); }
+    .task-form button { padding: 0 16px; border-radius: 11px; }
+    .task-list { display: grid; gap: 9px; }
+    .task-item { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .task-item input { accent-color: var(--mint); width: 17px; height: 17px; cursor: pointer; }
+    .task-text { flex: 1; font-size: 0.9rem; overflow-wrap: anywhere; }
+    .task-item.done .task-text { color: #9aa2b5; text-decoration: line-through; }
+    .delete-btn { border: 0; background: transparent; color: #9aa2b5; font-size: 1.1rem; cursor: pointer; border-radius: 8px; padding: 2px 6px; }
+    .delete-btn:hover { color: #d34f69; background: #fff0f2; }
+    .empty-state { padding: 15px; color: var(--muted); text-align: center; border: 1px dashed #dfe3f1; border-radius: 12px; font-size: 0.9rem; }
+
+    .focus-card { color: white; background: linear-gradient(145deg, #202a51, #363d78); border: 0; position: relative; overflow: hidden; }
+    .focus-card::after { content: "✦"; position: absolute; font-size: 9rem; color: rgba(255,255,255,0.05); right: 12px; bottom: -45px; transform: rotate(12deg); }
+    .focus-card .tiny-label { color: #a9f5e0; }
+    .focus-card h2 { margin: 11px 0 10px; font-size: 1.55rem; max-width: 340px; line-height: 1.2; }
+    .focus-card p { color: #d4d9ef; font-size: 0.92rem; max-width: 390px; }
+    .focus-tip { display: flex; gap: 11px; padding-top: 16px; margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.14); position: relative; z-index: 1; }
+    .focus-tip strong { display: block; font-size: 0.9rem; }
+    .focus-tip span { display: block; color: #c1c8e4; font-size: 0.8rem; margin-top: 3px; }
+
+    footer { padding: 22px 18px; text-align: center; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.83rem; }
+    footer strong { color: var(--primary-dark); }
+
+    @media (max-width: 850px) {
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 42px; }
+      .hero-visual { min-height: 270px; }
+      .roadmap { grid-template-columns: repeat(2, 1fr); }
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: 13px 18px; }
+      nav { gap: 13px; font-size: 0.8rem; }
+      .brand-name { font-size: 1rem; }
+      .brand-mark { width: 37px; height: 37px; }
+      .stats { grid-template-columns: 1fr; }
+      .roadmap { grid-template-columns: 1fr; }
+      .road-card p { min-height: 0; }
+      .section-heading { align-items: start; flex-direction: column; }
+      .task-card, .focus-card { padding: 19px; }
+      h1 { letter-spacing: -1.7px; }
+    }
+
+    /* Extended page sections */
+    .section-block { padding: 22px 0 18px; }
+    .section-intro { max-width: 720px; color: var(--muted); margin: 7px 0 0; }
+    .feature-grid, .tool-grid, .resource-grid, .project-grid { display: grid; gap: 16px; }
+    .feature-grid { grid-template-columns: repeat(3, 1fr); }
+    .feature-card { padding: 23px; }
+    .feature-symbol { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; font-size: 1.45rem; background: #eeeeff; margin-bottom: 17px; }
+    .feature-card:nth-child(2) .feature-symbol { background: #e4fbf4; }
+    .feature-card:nth-child(3) .feature-symbol { background: #fff0df; }
+    .feature-card h3, .tool-card h3, .resource-card h3, .project-card h3 { margin: 0 0 8px; font-size: 1.04rem; }
+    .feature-card p, .tool-card p, .resource-card p, .project-card p { color: var(--muted); font-size: .9rem; margin: 0; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 19px 0 17px; }
+    .filter-btn { border: 1px solid var(--line); color: var(--muted); background: #fff; padding: 8px 13px; border-radius: 999px; cursor: pointer; font-weight: 750; font-size: .82rem; }
+    .filter-btn.active, .filter-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+    .project-grid { grid-template-columns: repeat(3, 1fr); }
+    .project-card { padding: 22px; display: flex; flex-direction: column; min-height: 270px; }
+    .project-card[hidden] { display: none; }
+    .project-emoji { font-size: 1.75rem; margin-bottom: 13px; }
+    .project-meta { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 11px; }
+    .level-pill { font-size: .7rem; text-transform: uppercase; letter-spacing: .45px; font-weight: 850; color: #4b50c9; background: #f0f0ff; border-radius: 7px; padding: 5px 7px; }
+    .project-card:nth-child(2n) .level-pill { color: #137d68; background: #e4fbf4; }
+    .project-card:nth-child(3n) .level-pill { color: #9c6512; background: #fff0df; }
+    .project-card .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 15px 0 18px; }
+    .pill { padding: 4px 8px; border: 1px solid var(--line); border-radius: 7px; color: #66708a; font-size: .72rem; font-weight: 700; }
+    .project-card .btn { margin-top: auto; align-self: flex-start; font-size: .83rem; padding: 9px 12px; }
+    .tool-grid { grid-template-columns: repeat(3, 1fr); }
+    .tool-card { padding: 20px; display: flex; gap: 14px; align-items: flex-start; }
+    .tool-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 13px; background: #f0f0ff; font-size: 1.3rem; flex: 0 0 43px; }
+    .tool-card:nth-child(3n + 2) .tool-icon { background: #e4fbf4; }
+    .tool-card:nth-child(3n) .tool-icon { background: #fff0df; }
+    .tool-card p { font-size: .83rem; }
+    .week-panel { padding: 23px; }
+    .week-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-top: 18px; }
+    .week-day { text-align: left; border: 1px solid var(--line); background: #fbfcff; border-radius: 14px; padding: 15px 13px; cursor: pointer; transition: .18s ease; min-height: 130px; }
+    .week-day:hover { border-color: #bfc1ff; transform: translateY(-2px); }
+    .week-day strong { display: block; font-size: .8rem; color: var(--primary); margin-bottom: 11px; }
+    .week-day span { display: block; color: var(--ink); font-size: .83rem; font-weight: 700; }
+    .week-day small { display: block; color: var(--muted); font-size: .75rem; margin-top: 8px; }
+    .week-day.completed { background: #e9fbf5; border-color: #9be5d1; }
+    .week-day.completed strong::after { content: ' ✓'; color: #16866e; }
+    .week-progress-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .83rem; margin-top: 19px; }
+    .week-progress-track { height: 8px; flex: 1; max-width: 420px; border-radius: 99px; background: #eceef7; overflow: hidden; }
+    .week-progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--primary), var(--mint)); transition: width .25s ease; }
+    .resource-search { width: min(360px, 100%); padding: 12px 14px; border: 1px solid #dfe3f1; border-radius: 12px; background: #fff; outline: none; color: var(--ink); }
+    .resource-search:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(90,94,232,.1); }
+    .resource-grid { grid-template-columns: repeat(3, 1fr); }
+    .resource-card { padding: 21px; display: flex; flex-direction: column; align-items: flex-start; min-height: 205px; }
+    .resource-card[hidden] { display: none; }
+    .resource-kind { font-size: .7rem; font-weight: 850; letter-spacing: .6px; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; }
+    .resource-card .resource-link { margin-top: auto; padding-top: 15px; font-size: .84rem; color: var(--primary-dark); font-weight: 800; }
+    .resource-link:hover { text-decoration: underline; }
+    .quiz-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 18px; }
+    .quiz-intro { padding: 25px; color: white; border-radius: var(--radius); background: linear-gradient(145deg, #202a51, #363d78); }
+    .quiz-intro .tiny-label { color: #a9f5e0; }
+    .quiz-intro h2 { margin: 12px 0; font-size: 1.55rem; line-height: 1.2; }
+    .quiz-intro p { color: #d4d9ef; font-size: .9rem; }
+    .quiz-card { padding: 25px; }
+    .quiz-question { font-size: 1.08rem; font-weight: 800; margin: 0 0 17px; }
+    .quiz-options { display: grid; gap: 9px; }
+    .quiz-option { text-align: left; border: 1px solid var(--line); border-radius: 11px; background: #fff; padding: 12px 14px; cursor: pointer; color: var(--ink); }
+    .quiz-option:hover { border-color: #bfc1ff; background: #f8f8ff; }
+    .quiz-option.correct { border-color: #6bd3b7; background: #e7fbf4; }
+    .quiz-option.incorrect { border-color: #ef9eaa; background: #fff0f2; }
+    .quiz-feedback { min-height: 24px; margin: 13px 0 0; font-size: .87rem; color: var(--muted); }
+    .faq-list { display: grid; gap: 10px; }
+    .faq-item { padding: 0 18px; }
+    .faq-item summary { padding: 17px 0; cursor: pointer; font-weight: 800; list-style-position: inside; }
+    .faq-item p { margin: 0 0 18px; padding-left: 18px; color: var(--muted); font-size: .9rem; max-width: 850px; }
+    .cta-band { margin: 34px 0 58px; padding: 30px clamp(20px, 4vw, 42px); border-radius: 25px; background: linear-gradient(115deg, #eeefff, #e7fbf5); display: flex; justify-content: space-between; align-items: center; gap: 22px; }
+    .cta-band h2 { margin: 0 0 7px; font-size: clamp(1.3rem, 3vw, 1.9rem); letter-spacing: -.6px; }
+    .cta-band p { margin: 0; color: var(--muted); max-width: 590px; font-size: .92rem; }
+    .no-results { color: var(--muted); grid-column: 1 / -1; padding: 18px; border: 1px dashed var(--line); border-radius: 12px; }
+    .section-heading .heading-side { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    @media (max-width: 850px) {
+      .feature-grid, .tool-grid, .resource-grid, .project-grid { grid-template-columns: repeat(2, 1fr); }
+      .week-list { grid-template-columns: repeat(3, 1fr); }
+      .quiz-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      nav { gap: 10px; overflow-x: auto; max-width: 62vw; }
+      .feature-grid, .tool-grid, .resource-grid, .project-grid { grid-template-columns: 1fr; }
+      .week-list { grid-template-columns: repeat(2, 1fr); }
+      .week-progress-line { align-items: flex-start; flex-direction: column; }
+      .week-progress-track { width: 100%; max-width: none; flex: auto; }
+      .cta-band { flex-direction: column; align-items: flex-start; }
+      .project-card { min-height: 0; }
+    }
+
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="DataNest home">
+      <span class="brand-mark">⌘</span>
+      <span class="brand-name">Data<span>Nest</span></span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="#overview">Overview</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#projects">Projects</a>
+      <a href="#resources">Resources</a>
+      <a href="#tasks">My Tasks</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="home">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <div class="eyebrow">✦ Your personal learning space</div>
+        <h1 id="hero-title">Make your next skill <span>your superpower.</span></h1>
+        <p class="hero-copy">A simple study hub for AI and Data Science learners. Organise your practice, follow a clear roadmap, and turn small daily efforts into real progress.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#tasks">Plan today's learning ↗</a>
+          <a class="btn btn-light" href="#roadmap">Explore the roadmap</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Learning progress card">
+        <div class="visual-top"><small>YOUR LEARNING SNAPSHOT</small><span class="sparkle">✦</span></div>
+        <div class="visual-title">Curiosity → Capability</div>
+        <div class="visual-sub">One focused session at a time.</div>
+        <div class="mini-progress">
+          <div class="mini-progress-label"><span>Today's task progress</span><strong id="hero-progress-label">0%</strong></div>
+          <div class="progress-track"><div class="progress-fill" id="hero-progress-fill"></div></div>
+        </div>
+        <div class="floating-note"><span>🚀</span><span>Small steps. Strong foundations.</span></div>
+      </div>
+    </section>
+
+    <section id="overview" aria-labelledby="overview-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">At a glance</div><h2 id="overview-title">Your learning dashboard</h2><p>Keep the goal visible and the next step simple.</p></div>
+      </div>
+      <div class="stats">
+        <article class="stat"><div class="stat-icon">📚</div><div><strong>4</strong><span>Core learning stages</span></div></article>
+        <article class="stat"><div class="stat-icon">✅</div><div><strong id="completed-stat">0</strong><span>Tasks completed</span></div></article>
+        <article class="stat"><div class="stat-icon">🎯</div><div><strong id="remaining-stat">3</strong><span>Tasks to focus on</span></div></article>
+      </div>
+    </section>
+
+    <section id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Learn in order</div><h2 id="roadmap-title">The Data Science roadmap</h2><p>A beginner-friendly path from coding basics to intelligent models.</p></div>
+      </div>
+      <div class="roadmap">
+        <article class="card road-card"><div class="road-top"><div class="road-icon">🐍</div><span class="step">STEP 01</span></div><h3>Python Foundations</h3><p>Practise variables, loops, functions, and problem-solving.</p><span class="tag">Build the basics</span></article>
+        <article class="card road-card"><div class="road-top"><div class="road-icon">📊</div><span class="step">STEP 02</span></div><h3>Data Analysis</h3><p>Explore datasets with Pandas, NumPy, and visualisations.</p><span class="tag">Find the story</span></article>
+        <article class="card road-card"><div class="road-top"><div class="road-icon">🤖</div><span class="step">STEP 03</span></div><h3>Machine Learning</h3><p>Train models, test predictions, and evaluate performance.</p><span class="tag">Learn from data</span></article>
+        <article class="card road-card"><div class="road-top"><div class="road-icon">🧠</div><span class="step">STEP 04</span></div><h3>Deep Learning</h3><p>Discover neural networks, CNNs, RNNs, and AI applications.</p><span class="tag">Explore intelligence</span></article>
+      </div>
+    </section>
+
+
+    <section class="section-block" id="why-datanest" aria-labelledby="why-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Why DataNest?</div><h2 id="why-title">A better way to build learning habits</h2><p>Not another complicated platform—just the tools that help you keep moving.</p></div>
+      </div>
+      <div class="feature-grid">
+        <article class="card feature-card"><div class="feature-symbol">🧭</div><h3>Know your next step</h3><p>Follow a clear pathway instead of jumping between random tutorials. Build fundamentals before moving to advanced topics.</p></article>
+        <article class="card feature-card"><div class="feature-symbol">🧪</div><h3>Learn by doing</h3><p>Turn concepts into tiny experiments. A short Python script or a simple chart can teach more than passive reading alone.</p></article>
+        <article class="card feature-card"><div class="feature-symbol">🌱</div><h3>Notice your progress</h3><p>Set realistic goals, check off completed tasks, and use your progress to decide what to practise next.</p></article>
+      </div>
+    </section>
+
+    <section class="section-block" id="projects" aria-labelledby="projects-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Build something real</div><h2 id="projects-title">Project idea studio</h2><p>Choose a practical project, start small, and add complexity as your skills grow.</p></div>
+      </div>
+      <div class="filter-row" role="group" aria-label="Filter projects by difficulty">
+        <button type="button" class="filter-btn active" data-project-filter="all">All ideas</button>
+        <button type="button" class="filter-btn" data-project-filter="beginner">Beginner</button>
+        <button type="button" class="filter-btn" data-project-filter="intermediate">Intermediate</button>
+        <button type="button" class="filter-btn" data-project-filter="advanced">Advanced</button>
+      </div>
+      <div class="project-grid" id="project-grid">
+        <article class="card project-card" data-level="beginner"><div class="project-emoji">🎓</div><div class="project-meta"><span class="level-pill">Beginner</span><span class="step">PROJECT 01</span></div><h3>Student Performance Predictor</h3><p>Explore how attendance, study time, and practice habits relate to student results. Train a model and explain its limitations.</p><div class="pill-row"><span class="pill">Python</span><span class="pill">Pandas</span><span class="pill">Scikit-learn</span></div><button class="btn btn-light add-project" data-task="Build a Student Performance Predictor">Add to my tasks ↗</button></article>
+        <article class="card project-card" data-level="beginner"><div class="project-emoji">🏠</div><div class="project-meta"><span class="level-pill">Beginner</span><span class="step">PROJECT 02</span></div><h3>House Price Explorer</h3><p>Clean housing data, create visualisations, and build a first regression model to estimate property prices.</p><div class="pill-row"><span class="pill">Data cleaning</span><span class="pill">Regression</span><span class="pill">Charts</span></div><button class="btn btn-light add-project" data-task="Start a House Price Explorer project">Add to my tasks ↗</button></article>
+        <article class="card project-card" data-level="beginner"><div class="project-emoji">💸</div><div class="project-meta"><span class="level-pill">Beginner</span><span class="step">PROJECT 03</span></div><h3>Smart Expense Analyzer</h3><p>Group sample expenses by category, find spending patterns, and show the results in a simple dashboard.</p><div class="pill-row"><span class="pill">CSV</span><span class="pill">Pandas</span><span class="pill">Visualisation</span></div><button class="btn btn-light add-project" data-task="Create a Smart Expense Analyzer">Add to my tasks ↗</button></article>
+        <article class="card project-card" data-level="intermediate"><div class="project-emoji">🎬</div><div class="project-meta"><span class="level-pill">Intermediate</span><span class="step">PROJECT 04</span></div><h3>Movie Review Sentiment</h3><p>Classify review text as positive or negative and inspect examples the model gets wrong.</p><div class="pill-row"><span class="pill">NLP</span><span class="pill">TF-IDF</span><span class="pill">Classification</span></div><button class="btn btn-light add-project" data-task="Build a Movie Review Sentiment model">Add to my tasks ↗</button></article>
+        <article class="card project-card" data-level="intermediate"><div class="project-emoji">🩻</div><div class="project-meta"><span class="level-pill">Intermediate</span><span class="step">PROJECT 05</span></div><h3>Image Classifier</h3><p>Train a small neural network to recognise classes in a public image dataset and evaluate its accuracy.</p><div class="pill-row"><span class="pill">CNN</span><span class="pill">TensorFlow</span><span class="pill">Images</span></div><button class="btn btn-light add-project" data-task="Train a beginner image classifier">Add to my tasks ↗</button></article>
+        <article class="card project-card" data-level="advanced"><div class="project-emoji">🧊</div><div class="project-meta"><span class="level-pill">Advanced</span><span class="step">PROJECT 06</span></div><h3>Iceberg Route-Risk Assistant</h3><p>Combine satellite-derived observations and movement forecasts to estimate potential risk near a route. Treat outputs as decision support, not guaranteed navigation advice.</p><div class="pill-row"><span class="pill">Time series</span><span class="pill">Geospatial data</span><span class="pill">Deep learning</span></div><button class="btn btn-light add-project" data-task="Plan the Iceberg Route-Risk Assistant project">Add to my tasks ↗</button></article>
+      </div>
+    </section>
+
+    <section class="section-block" id="toolkit" aria-labelledby="toolkit-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Your toolkit</div><h2 id="toolkit-title">Tools worth learning</h2><p>Start with a few tools and learn them through practice rather than trying everything at once.</p></div>
+      </div>
+      <div class="tool-grid">
+        <article class="card tool-card"><div class="tool-icon">🐍</div><div><h3>Python</h3><p>Your main language for scripts, data work, automation, and machine learning.</p></div></article>
+        <article class="card tool-card"><div class="tool-icon">🧮</div><div><h3>NumPy & Pandas</h3><p>Work with arrays, tables, missing values, and real-world datasets.</p></div></article>
+        <article class="card tool-card"><div class="tool-icon">📈</div><div><h3>Matplotlib</h3><p>Use plots to communicate distributions, trends, relationships, and outliers.</p></div></article>
+        <article class="card tool-card"><div class="tool-icon">🤖</div><div><h3>Scikit-learn</h3><p>Build baseline models and learn training, validation, and evaluation workflows.</p></div></article>
+        <article class="card tool-card"><div class="tool-icon">🧠</div><div><h3>TensorFlow / Keras</h3><p>Explore neural networks after you understand the fundamentals of machine learning.</p></div></article>
+        <article class="card tool-card"><div class="tool-icon">🌿</div><div><h3>Git & GitHub</h3><p>Save versions of your code, document projects, and build a portfolio over time.</p></div></article>
+      </div>
+    </section>
+
+    <section class="section-block" id="weekly-plan" aria-labelledby="week-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Make it achievable</div><h2 id="week-title">A sample five-day study plan</h2><p>Click a day when you complete it. Your checklist is saved in this browser.</p></div>
+      </div>
+      <div class="card week-panel">
+        <div class="week-list" id="week-list">
+          <button class="week-day" type="button" data-day="0"><strong>MONDAY</strong><span>Python practice</span><small>20–30 minutes · loops, functions</small></button>
+          <button class="week-day" type="button" data-day="1"><strong>TUESDAY</strong><span>Data exploration</span><small>30 minutes · load and inspect a CSV</small></button>
+          <button class="week-day" type="button" data-day="2"><strong>WEDNESDAY</strong><span>Visualise one insight</span><small>25 minutes · one clear chart</small></button>
+          <button class="week-day" type="button" data-day="3"><strong>THURSDAY</strong><span>Understand one model</span><small>30 minutes · learn the intuition</small></button>
+          <button class="week-day" type="button" data-day="4"><strong>FRIDAY</strong><span>Review and document</span><small>20 minutes · notes and next steps</small></button>
+        </div>
+        <div class="week-progress-line"><span id="week-progress-label">0 of 5 days complete</span><div class="week-progress-track"><div class="week-progress-fill" id="week-progress-fill"></div></div><button class="filter-btn" id="reset-week" type="button">Reset week</button></div>
+      </div>
+    </section>
+
+    <section class="section-block" id="resources" aria-labelledby="resources-title">
+      <div class="section-heading">
+        <div><div class="tiny-label">Useful links</div><h2 id="resources-title">Learning resource shelf</h2><p>Use documentation and guided practice to strengthen each topic.</p></div>
+        <div class="heading-side"><input class="resource-search" id="resource-search" type="search" placeholder="Search Python, ML, data..." aria-label="Search learning resources"></div>
+      </div>
+      <div class="resource-grid" id="resource-grid">
+        <article class="card resource-card" data-search="python programming beginner documentation"><div class="resource-kind">Programming</div><h3>Python Documentation</h3><p>Read the official tutorial to understand Python syntax, data structures, functions, and modules.</p><a class="resource-link" href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener noreferrer">Explore Python ↗</a></article>
+        <article class="card resource-card" data-search="kaggle learn data science courses practice"><div class="resource-kind">Hands-on practice</div><h3>Kaggle Learn</h3><p>Try short, practical lessons in Python, Pandas, data visualisation, and introductory machine learning.</p><a class="resource-link" href="https://www.kaggle.com/learn" target="_blank" rel="noopener noreferrer">Open Kaggle Learn ↗</a></article>
+        <article class="card resource-card" data-search="google colab notebook python browser"><div class="resource-kind">Coding environment</div><h3>Google Colab</h3><p>Experiment with Python notebooks in a browser without setting up a local environment first.</p><a class="resource-link" href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer">Launch Colab ↗</a></article>
+        <article class="card resource-card" data-search="pandas dataframes csv cleaning documentation"><div class="resource-kind">Data handling</div><h3>Pandas Getting Started</h3><p>Learn how to read tabular data, filter rows, handle missing values, and summarise columns.</p><a class="resource-link" href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/" target="_blank" rel="noopener noreferrer">Learn Pandas ↗</a></article>
+        <article class="card resource-card" data-search="scikit learn machine learning model evaluation documentation"><div class="resource-kind">Machine learning</div><h3>Scikit-learn Guides</h3><p>Study estimators, preprocessing, model selection, metrics, and common machine-learning workflows.</p><a class="resource-link" href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener noreferrer">Read the user guide ↗</a></article>
+        <article class="card resource-card" data-search="tensorflow keras deep learning neural network tutorial"><div class="resource-kind">Deep learning</div><h3>TensorFlow Tutorials</h3><p>Follow guided examples for neural networks, image classification, and model training.</p><a class="resource-link" href="https://www.tensorflow.org/tutorials" target="_blank" rel="noopener noreferrer">Explore tutorials ↗</a></article>
+      </div>
+      <div class="no-results" id="resource-no-results" hidden>No matching resource found. Try a broader keyword.</div>
+    </section>
+
+    <section class="section-block" id="quick-quiz" aria-labelledby="quiz-title">
+      <div class="quiz-layout">
+        <div class="quiz-intro"><div class="tiny-label">Quick knowledge check</div><h2>Pause and test what you know.</h2><p>A tiny quiz can help you check your understanding. Guess first, then read the feedback.</p><span class="floating-note">✨ No marks. Just practice.</span></div>
+        <div class="card quiz-card">
+          <p class="quiz-question" id="quiz-title">Which step should usually come before training a machine-learning model?</p>
+          <div class="quiz-options" id="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">Choose a model without looking at the data</button>
+            <button type="button" class="quiz-option" data-correct="true">Understand and prepare the dataset</button>
+            <button type="button" class="quiz-option" data-correct="false">Deploy the model immediately</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" aria-live="polite">Select an answer to see why it is right or wrong.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="tasks" aria-label="Tasks and study motivation">
+      <div class="section-heading">
+        <div><div class="tiny-label">Take action</div><h2>Turn plans into practice</h2><p>Add a realistic learning goal, then check it off when you finish.</p></div>
+      </div>
+      <div class="bottom-grid">
+        <article class="card task-card">
+          <div class="card-title-row"><h2>Today's task list</h2><span class="count-pill" id="task-count">0 tasks</span></div>
+          <form class="task-form" id="task-form">
+            <input id="task-input" type="text" maxlength="90" placeholder="Add a small learning goal..." aria-label="New learning task" required />
+            <button class="btn btn-primary" type="submit">Add +</button>
+          </form>
+          <div class="task-list" id="task-list" aria-live="polite"></div>
+        </article>
+        <aside class="card focus-card">
+          <div class="tiny-label">A reminder for today</div>
+          <h2>You don't need to know everything. Just keep learning.</h2>
+          <p>Consistency beats a perfect plan. Spend 25 minutes on one concept, practise it, and write down what you discovered.</p>
+          <div class="focus-tip"><span>💡</span><div><strong>Try the 25-minute focus sprint</strong><span>Choose one task · silence distractions · practise · take a short break.</span></div></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section-block" id="faq" aria-labelledby="faq-title">
+      <div class="section-heading"><div><div class="tiny-label">A few answers</div><h2 id="faq-title">Frequently asked questions</h2><p>Simple guidance for getting started with Data Science.</p></div></div>
+      <div class="faq-list">
+        <details class="card faq-item"><summary>Do I need to be good at mathematics before starting?</summary><p>No. Begin with basic arithmetic, graphs, and the meaning of averages. Learn probability, statistics, and linear algebra gradually as your projects require them.</p></details>
+        <details class="card faq-item"><summary>Should I learn Python or machine learning first?</summary><p>Start with Python fundamentals and practise writing small programs. Then learn data handling and basic statistics before building your first machine-learning model.</p></details>
+        <details class="card faq-item"><summary>How long should I study each day?</summary><p>Consistency matters more than a large number of hours. Even 25–45 focused minutes can help when you practise actively and return regularly.</p></details>
+        <details class="card faq-item"><summary>What makes a good student project?</summary><p>A good project solves a clear problem, uses understandable data, compares a baseline, evaluates results honestly, and explains limitations. A simple finished project is better than an unfinished project with too many features.</p></details>
+        <details class="card faq-item"><summary>Can I use this webpage for my web application development demo?</summary><p>Yes. You can demonstrate the navigation, project filters, resource search, weekly checklist, quiz feedback, and task manager. The page uses HTML for structure, CSS for design, and JavaScript for interactivity.</p></details>
+      </div>
+    </section>
+
+    <section class="cta-band" aria-label="Start learning call to action">
+      <div><h2>Your future project starts with one small step.</h2><p>Choose one concept, practise it, and record what you learned. Use DataNest as a simple place to keep that momentum going.</p></div>
+      <a class="btn btn-primary" href="#tasks">Plan one task today ↑</a>
+    </section>
+
+  </main>
+
+  <footer>Designed for curious minds building a future in <strong>AI & Data Science</strong> ✦</footer>
+
+  <script>
+    // Tasks are saved in this browser, so they remain after refreshing the page.
+    const starterTasks = [
+      { id: 1, text: "Solve 2 Python practice problems", done: false },
+      { id: 2, text: "Revise one Data Science concept", done: false },
+      { id: 3, text: "Write notes from today's learning", done: false }
+    ];
+
+    let tasks;
+    try {
+      const savedTasks = localStorage.getItem("datanestTasks");
+      tasks = savedTasks ? JSON.parse(savedTasks) : starterTasks;
+      if (!Array.isArray(tasks)) tasks = starterTasks;
+    } catch (error) {
+      tasks = starterTasks;
+    }
+
+    const taskForm = document.getElementById("task-form");
+    const taskInput = document.getElementById("task-input");
+    const taskList = document.getElementById("task-list");
+
+    function saveTasks() {
+      try { localStorage.setItem("datanestTasks", JSON.stringify(tasks)); } catch (error) { /* The app still works without storage. */ }
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+      if (tasks.length === 0) {
+        taskList.innerHTML = '<div class="empty-state">No tasks yet. Add one small goal to get started ✨</div>';
+      }
+
+      tasks.forEach((task) => {
+        const row = document.createElement("div");
+        row.className = `task-item${task.done ? " done" : ""}`;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = Boolean(task.done);
+        checkbox.setAttribute("aria-label", `Mark ${task.text} as complete`);
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+
+        const label = document.createElement("span");
+        label.className = "task-text";
+        label.textContent = task.text;
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "delete-btn";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", `Delete ${task.text}`);
+        remove.addEventListener("click", () => {
+          tasks = tasks.filter((item) => item.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+
+        row.append(checkbox, label, remove);
+        taskList.appendChild(row);
+      });
+
+      const completed = tasks.filter((task) => task.done).length;
+      const remaining = tasks.length - completed;
+      const progress = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
+      document.getElementById("completed-stat").textContent = completed;
+      document.getElementById("remaining-stat").textContent = remaining;
+      document.getElementById("task-count").textContent = `${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`;
+      document.getElementById("hero-progress-label").textContent = `${progress}%`;
+      document.getElementById("hero-progress-fill").style.width = `${progress}%`;
+    }
+
+    taskForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = taskInput.value.trim();
+      if (!text) return;
+      tasks.push({ id: Date.now(), text, done: false });
+      saveTasks();
+      renderTasks();
+      taskInput.value = "";
+      taskInput.focus();
+    });
+
+
+    // Project difficulty filters.
+    const projectFilters = document.querySelectorAll('[data-project-filter]');
+    const projectCards = document.querySelectorAll('.project-card[data-level]');
+    projectFilters.forEach((button) => {
+      button.addEventListener('click', () => {
+        projectFilters.forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        const selected = button.dataset.projectFilter;
+        projectCards.forEach((card) => {
+          card.hidden = selected !== 'all' && card.dataset.level !== selected;
+        });
+      });
+    });
+
+    // Add a project idea to the learning task list.
+    document.querySelectorAll('.add-project').forEach((button) => {
+      button.addEventListener('click', () => {
+        const text = button.dataset.task;
+        if (!tasks.some((task) => task.text === text)) {
+          tasks.push({ id: Date.now() + Math.floor(Math.random() * 1000), text, done: false });
+          saveTasks();
+          renderTasks();
+        }
+        button.textContent = tasks.some((task) => task.text === text && task.done) ? 'Already completed ✓' : 'Added to tasks ✓';
+        document.getElementById('tasks').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Search the resource shelf by title, summary, and search keywords.
+    const resourceSearch = document.getElementById('resource-search');
+    const resourceCards = Array.from(document.querySelectorAll('.resource-card'));
+    const noResourceResults = document.getElementById('resource-no-results');
+    resourceSearch.addEventListener('input', () => {
+      const query = resourceSearch.value.trim().toLowerCase();
+      let visible = 0;
+      resourceCards.forEach((card) => {
+        const matches = `${card.textContent} ${card.dataset.search || ''}`.toLowerCase().includes(query);
+        card.hidden = !matches;
+        if (matches) visible++;
+      });
+      noResourceResults.hidden = visible !== 0;
+    });
+
+    // Weekly learning checklist persists locally.
+    const weekButtons = Array.from(document.querySelectorAll('.week-day'));
+    const weekProgressLabel = document.getElementById('week-progress-label');
+    const weekProgressFill = document.getElementById('week-progress-fill');
+    let completedDays = [];
+    try {
+      const savedWeek = JSON.parse(localStorage.getItem('datanestWeek') || '[]');
+      if (Array.isArray(savedWeek)) completedDays = savedWeek.filter((day) => Number.isInteger(day) && day >= 0 && day < weekButtons.length);
+    } catch (error) { completedDays = []; }
+    function renderWeek() {
+      weekButtons.forEach((button, index) => {
+        const completed = completedDays.includes(index);
+        button.classList.toggle('completed', completed);
+        button.setAttribute('aria-pressed', String(completed));
+      });
+      weekProgressLabel.textContent = `${completedDays.length} of ${weekButtons.length} days complete`;
+      weekProgressFill.style.width = `${(completedDays.length / weekButtons.length) * 100}%`;
+      try { localStorage.setItem('datanestWeek', JSON.stringify(completedDays)); } catch (error) { /* The checklist still works for this session. */ }
+    }
+    weekButtons.forEach((button, index) => button.addEventListener('click', () => {
+      completedDays = completedDays.includes(index) ? completedDays.filter((day) => day !== index) : [...completedDays, index];
+      renderWeek();
+    }));
+    document.getElementById('reset-week').addEventListener('click', () => { completedDays = []; renderWeek(); });
+    renderWeek();
+
+    // Tiny interactive quiz.
+    const quizOptions = document.querySelectorAll('.quiz-option');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    quizOptions.forEach((button) => button.addEventListener('click', () => {
+      quizOptions.forEach((option) => option.classList.remove('correct', 'incorrect'));
+      const correct = button.dataset.correct === 'true';
+      button.classList.add(correct ? 'correct' : 'incorrect');
+      quizFeedback.textContent = correct
+        ? 'Correct! First inspect and prepare the data so you understand its structure, quality, and potential problems.'
+        : 'Not quite. Start by understanding the dataset, checking its quality, and preparing suitable features before training.';
+    }));
+
+    renderTasks();
+  </script>
+</body>
+</html>
